@@ -1,0 +1,55 @@
+# Node / Bundlers
+node_modules/
+.parcel-cache/
+dist/
+.cache/
+
+# Prettier & IDEs
+.prettierignore
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# SASS / Package Logs
+.sass-cache/
+*.css.map
+*.sass.map
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment Variables & Scripts
+.env
+helper.js
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Volume Root / Network Files
+.DocumentRevisions-V100/
+.fseventsd/
+.Spotlight-V100/
+.TemporaryItems/
+.Trashes/
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB/
+.AppleDesktop/
+Network Trash Folder/
+Temporary Items/
+.apdisk
+*.icloud
+
+### Visual Studio ###
+*.rsuser
+*.user
+*.userosscache
+*.sln.docstates

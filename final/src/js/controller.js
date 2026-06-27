@@ -1,12 +1,10 @@
 import 'core-js/stable';
 import 'dotenv/config';
 import 'regenerator-runtime/runtime';
-import icons from 'url:../img/icons.svg';
-import { getRecipeHtml } from './recipeTemplates';
+import * as model from './model';
+import recipeView from './views/recipeView';
 
 // const FORKIFY_API_KEY = process.env.FORKIFY_API_KEY;
-
-const recipeContainer = document.querySelector('.recipe');
 
 const timeout = function (s) {
   return new Promise(function (_, reject) {
@@ -24,171 +22,40 @@ if (module.hot) {
 // NEW API URL (instead of the one shown in the video)
 // https://forkify-api.jonas.io
 
-//////////////////////////////////////////////
-// HELPER FUNCTIONS
-//////////////////////////////////////////////
-
-const formatRecipePropertyNamesToCamelCase = function (recipe) {
-  return {
-    id: recipe.id,
-    publisher: recipe.publisher,
-    sourceUrl: recipe.source_url,
-    imageUrl: recipe.image_url,
-    title: recipe.title,
-    cookingTime: recipe.cooking_time,
-    ingredients: recipe.ingredients,
-    servings: recipe.servings,
-  };
-};
-
-//////////////////////////////////////////////
-// MAIN FUNCTIONS
-//////////////////////////////////////////////
-
 // GET RECIPE FROM API
-const getRecipeById = async function (id) {
-  try {
-    const response = await fetch(
-      `https://forkify-api.jonas.io/api/v2/recipes/${id}`,
-    );
-
-    const data = await response.json();
-
-    // Throw error if fetch failed
-    if (!response.ok)
-      throw new Error(
-        `Fetch failed \nStatus: ${response.status} \nReason: ${data.message}\n`,
-      );
-
-    // Destructure recipe object from data
-    const {
-      data: { recipe },
-    } = data;
-
-    console.log(recipe);
-
-    // Return retrieved and formatted recipe
-    return formatRecipePropertyNamesToCamelCase(recipe);
-  } catch (err) {
-    throw err;
-  }
-};
-
-const renderElement = (
-  parentElement,
-  elementHtml,
-  insertPosition = 'afterbegin',
-) => parentElement.insertAdjacentHTML(insertPosition, elementHtml);
-
-const emptyElement = containerElement => (containerElement.innerHTML = '');
-
-const renderRecipe = (html, parentElement = recipeContainer) => {
-  emptyElement(recipeContainer);
-  renderElement(recipeContainer, html);
-};
-// recipeContainer.insertAdjacentHTML('afterbegin', html);
-
-const renderGreetingMessage = () => {
-  const html = `
-        <div class="message">
-          <div>
-            <svg>
-              <use href="${icons}#icon-smile"></use>
-            </svg>
-          </div>
-          <p>Start by searching for a recipe or an ingredient. Have fun!</p>
-        </div>
-  `;
-  emptyElement(recipeContainer);
-  renderElement(recipeContainer, html);
-};
-
-const renderSpinner = parentElement => {
-  const html = `
-    <div class="spinner">
-      <svg>
-        <use href="${icons}#icon-loader"></use>
-      </svg>
-    </div>
-  `;
-  emptyElement(parentElement);
-  renderElement(parentElement, html);
-};
-
 const recipeId = '664c8f193e7aa067e94e86af';
 
 const displayRecipe = async function () {
   try {
-    const recipeId = window.location.hash.slice(1);
+    const id = recipeView.getHash();
 
     // Guard Clause for empty hash
-    if (!recipeId) return;
+    if (!id) return;
 
     // Show spinner
-    renderSpinner(recipeContainer);
+    recipeView.spinner();
 
-    // Get recipe data from ID
-    const currentRecipe = await getRecipeById(recipeId);
-
-    // Check if recipe object is undefined
-    if (!currentRecipe)
-      throw new Error(`Could not find recipe by id: ${recipeId}`);
+    // Get recipe data
+    const data = await model.loadRecipe(id);
+    console.log(data);
 
     // Render recipe to screen
-    renderRecipe(getRecipeHtml(currentRecipe));
+    recipeView.render(data);
   } catch (err) {
-    emptyElement(recipeContainer);
+    // Log any errors to console
+    console.error(`System Failure in displayRecipe: \n${err}`);
 
-    const html = `
-      <div style="text-align: center; margin: 5rem;">
-        <h1>Recipe not found :(</h1>
-        <p>${err.message}</p>
-      </div>
-    `;
-
-    recipeContainer.insertAdjacentHTML('afterbegin', html);
-    console.error(err);
+    // Render error message to user
+    recipeView.error(err);
   }
 };
 
-['hashchange', 'load'].forEach(event =>
-  window.addEventListener(event, displayRecipe),
-);
+const init = function () {
+  ['hashchange', 'load'].forEach(event =>
+    window.addEventListener(event, displayRecipe),
+  );
+};
 
-// getAndDisplayRecipe(recipeId);
+init();
 
-//////////////////////////////////////////////
-// MOCK API RESPONSE
-//////////////////////////////////////////////
-
-// const mockRecipe = {
-//   data: {
-//     recipe: {
-//       cooking_time: 60,
-//       id: '664c8f193e7aa067e94e86af',
-//       image_url:
-//         'http://forkify-api.herokuapp.com/images/4797377235_c07589b7d4_be953.jpg',
-//       ingredients: [
-//         ({ quantity: 1, unit: '', description: 'can large biscuits' },
-//         { quantity: 1, unit: '', description: 'whole can refried beans' },
-//         { quantity: 3, unit: 'tbsps', description: 'salsa or picante sauce' },
-//         { quantity: 1.5, unit: 'cups', description: 'grated cheddar cheese' },
-//         { quantity: null, unit: '', description: 'Pico de gallo' },
-//         {
-//           quantity: 2,
-//           unit: 'cups',
-//           description: 'browned hamburger meat seasoned',
-//         },
-//         { quantity: null, unit: '', description: 'Shredded iceberg lettuce' },
-//         { quantity: 3, unit: 'tbsps', description: 'salsa' },
-//         { quantity: 5, unit: 'tbsps', description: 'sour cream' },
-//         { quantity: null, unit: '', description: 'Cilantro for garnish' }),
-//       ],
-//       publisher: 'The Pioneer Woman',
-//       servings: 4,
-//       source_url:
-//         'http://thepioneerwoman.com/cooking/2010/07/16-minute-meal-4-mexican-flatbread-pizza/',
-//       title: 'Mexican “Flatbread” Pizza',
-//     },
-//   },
-// };
+displayRecipe();

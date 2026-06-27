@@ -1,4 +1,13 @@
-# Forkify Application
+<h1 align="center">Forkify Application</h1>
+
+<p align="center">
+  <a href="https://github.com/ZaneCotten/forkify/actions/workflows/ci.yml">
+    <img src="https://github.com/ZaneCotten/forkify/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI Pipeline">
+  </a>
+  <a href="https://github.com/ZaneCotten/forkify/actions/workflows/github-code-scanning/codeql">
+    <img src="https://github.com/ZaneCotten/forkify/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main" alt="CodeQL">
+  </a>
+</p>
 
 A modern JavaScript recipe application built as part of [The Complete JavaScript Course 2025: From Zero to Expert!](https://www.udemy.com/course/the-complete-javascript-course/) by [Jonas Schmedtmann](https://x.com/jonasschmedtman).
 

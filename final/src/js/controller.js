@@ -1,6 +1,7 @@
 import 'core-js/stable';
 import 'dotenv/config';
 import 'regenerator-runtime/runtime';
+import icons from 'url:../img/icons.svg';
 import { getRecipeHtml } from './recipeTemplates';
 
 // const FORKIFY_API_KEY = process.env.FORKIFY_API_KEY;
@@ -73,23 +74,54 @@ const getRecipeById = async function (id) {
   }
 };
 
-const insertRecipe = html =>
-  recipeContainer.insertAdjacentHTML('afterbegin', html);
+const renderElement = (
+  parentElement,
+  elementHtml,
+  insertPosition = 'afterbegin',
+) => parentElement.insertAdjacentHTML(insertPosition, elementHtml);
 
-const hideMessage = () =>
-  (recipeContainer.querySelector('.message').style.display = 'none');
+const emptyElement = containerElement => (containerElement.innerHTML = '');
 
-const displayRecipe = function (recipe) {
-  insertRecipe(getRecipeHtml(recipe));
-  hideMessage();
+const renderRecipe = (html, parentElement = recipeContainer) => {
+  emptyElement(recipeContainer);
+  renderElement(recipeContainer, html);
+};
+// recipeContainer.insertAdjacentHTML('afterbegin', html);
+
+const renderGreetingMessage = () => {
+  const html = `
+        <div class="message">
+          <div>
+            <svg>
+              <use href="${icons}#icon-smile"></use>
+            </svg>
+          </div>
+          <p>Start by searching for a recipe or an ingredient. Have fun!</p>
+        </div>
+  `;
+  emptyElement(recipeContainer);
+  renderElement(recipeContainer, html);
+};
+
+const renderSpinner = parentElement => {
+  const html = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+  emptyElement(parentElement);
+  renderElement(parentElement, html);
 };
 
 const recipeId = '664c8f193e7aa067e94e86af';
 
 const getAndDisplayRecipe = async function (recipeId) {
+  renderSpinner(recipeContainer);
   const currentRecipe = await getRecipeById(recipeId);
 
-  displayRecipe(currentRecipe);
+  renderRecipe(getRecipeHtml(currentRecipe));
 };
 
 getAndDisplayRecipe(recipeId);

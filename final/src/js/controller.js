@@ -57,7 +57,7 @@ const getRecipeById = async function (id) {
     // Throw error if fetch failed
     if (!response.ok)
       throw new Error(
-        `\nFetch failed \nStatus: ${response.status} \nReason: ${data.message}`,
+        `Fetch failed \nStatus: ${response.status} \nReason: ${data.message}\n`,
       );
 
     // Destructure recipe object from data
@@ -70,7 +70,7 @@ const getRecipeById = async function (id) {
     // Return retrieved and formatted recipe
     return formatRecipePropertyNamesToCamelCase(recipe);
   } catch (err) {
-    console.error(`Something went wrong! ${err.message}`);
+    throw err;
   }
 };
 
@@ -117,14 +117,45 @@ const renderSpinner = parentElement => {
 
 const recipeId = '664c8f193e7aa067e94e86af';
 
-const getAndDisplayRecipe = async function (recipeId) {
-  renderSpinner(recipeContainer);
-  const currentRecipe = await getRecipeById(recipeId);
+const displayRecipe = async function () {
+  try {
+    const recipeId = window.location.hash.slice(1);
 
-  renderRecipe(getRecipeHtml(currentRecipe));
+    // Guard Clause for empty hash
+    if (!recipeId) return;
+
+    // Show spinner
+    renderSpinner(recipeContainer);
+
+    // Get recipe data from ID
+    const currentRecipe = await getRecipeById(recipeId);
+
+    // Check if recipe object is undefined
+    if (!currentRecipe)
+      throw new Error(`Could not find recipe by id: ${recipeId}`);
+
+    // Render recipe to screen
+    renderRecipe(getRecipeHtml(currentRecipe));
+  } catch (err) {
+    emptyElement(recipeContainer);
+
+    const html = `
+      <div style="text-align: center; margin: 5rem;">
+        <h1>Recipe not found :(</h1>
+        <p>${err.message}</p>
+      </div>
+    `;
+
+    recipeContainer.insertAdjacentHTML('afterbegin', html);
+    console.error(err);
+  }
 };
 
-getAndDisplayRecipe(recipeId);
+['hashchange', 'load'].forEach(event =>
+  window.addEventListener(event, displayRecipe),
+);
+
+// getAndDisplayRecipe(recipeId);
 
 //////////////////////////////////////////////
 // MOCK API RESPONSE

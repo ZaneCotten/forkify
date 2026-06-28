@@ -4,8 +4,6 @@ import 'regenerator-runtime/runtime';
 import * as model from './model';
 import recipeView from './views/recipeView';
 
-// const FORKIFY_API_KEY = process.env.FORKIFY_API_KEY;
-
 const timeout = function (s) {
   return new Promise(function (_, reject) {
     setTimeout(function () {
@@ -18,12 +16,6 @@ if (module.hot) {
   module.hot.accept();
   console.log('Hot module updated!');
 }
-
-// NEW API URL (instead of the one shown in the video)
-// https://forkify-api.jonas.io
-
-// GET RECIPE FROM API
-const recipeId = '664c8f193e7aa067e94e86af';
 
 const displayRecipe = async function () {
   try {

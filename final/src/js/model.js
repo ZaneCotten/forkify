@@ -1,3 +1,5 @@
+import { API_URL } from './config.js';
+
 export const state = {
   recipe: {},
 };
@@ -5,9 +7,7 @@ export const state = {
 // Fetches recipe data using recipe id
 export const loadRecipe = async function (id) {
   try {
-    const response = await fetch(
-      `https://forkify-api.jonas.io/api/v2/recipes/${id}`,
-    );
+    const response = await fetch(`${API_URL}/${id}`);
 
     // Parse data to JSON
     const data = await response.json();

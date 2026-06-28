@@ -14,7 +14,7 @@ const controlRecipes = async function () {
     if (!id) return;
 
     // Show spinner while fetching recipe
-    recipeView.spinner();
+    recipeView.renderSpinner();
 
     // Get recipe data
     const data = await model.loadRecipe(id);

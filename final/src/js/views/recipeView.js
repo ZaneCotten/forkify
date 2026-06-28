@@ -1,3 +1,4 @@
+import toFraction from 'fracty';
 import icons from 'url:../../img/icons.svg';
 
 class RecipeView {
@@ -164,7 +165,9 @@ class RecipeView {
   // Returns Markup for ingredient quantity received
   // If quantity is undefined, returns empty string
   #generateIngredientQuantityMarkup(quantity) {
-    return quantity ? `<div class="recipe__quantity">${quantity}</div>` : '';
+    return quantity
+      ? `<div class="recipe__quantity">${toFraction(quantity)}</div>`
+      : '';
   }
 
   #generateSpinnerMarkup() {

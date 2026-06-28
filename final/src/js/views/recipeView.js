@@ -180,11 +180,22 @@ class RecipeView {
   `;
   }
 
+  #escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   #generateErrorMarkup(error, errorMessage) {
+    const safeErrorMessage = this.#escapeHtml(error?.message ?? '');
+
     return `
       <div style="text-align: center; margin: 5rem;">
         <h1>${this.#errorMessage}</h1>
-        <p>${error.message}</p>
+        <p>${safeErrorMessage}</p>
       </div>
     `;
   }

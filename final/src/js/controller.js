@@ -1,5 +1,5 @@
-import * as model from './model';
-import recipeView from './views/recipeView';
+import * as model from './model.js';
+import recipeView from './views/recipeView.js';
 
 if (module.hot) {
   module.hot.accept();

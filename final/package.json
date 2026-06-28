@@ -9,10 +9,8 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "core-js": "^3.49.0",
     "dotenv": "^17.4.2",
-    "fracty": "^1.0.12",
-    "regenerator-runtime": "^0.14.1"
+    "fracty": "^1.0.12"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.16.4",

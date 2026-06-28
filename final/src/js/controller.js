@@ -6,14 +6,14 @@ if (module.hot) {
   console.log('Hot module updated!');
 }
 
-const displayRecipe = async function () {
+const controlRecipes = async function () {
   try {
     const id = recipeView.getHash();
 
     // Guard Clause for empty hash
     if (!id) return;
 
-    // Show spinner
+    // Show spinner while fetching recipe
     recipeView.spinner();
 
     // Get recipe data
@@ -24,19 +24,16 @@ const displayRecipe = async function () {
     recipeView.render(data);
   } catch (err) {
     // Log any errors to console
-    console.error(`System Failure in displayRecipe: \n${err}`);
+    console.error(`System Failure in controlRecipes: \n${err}`);
 
     // Render error message to user
-    recipeView.error(err);
+    recipeView.renderError(err);
   }
 };
 
 const init = function () {
-  ['hashchange', 'load'].forEach(event =>
-    window.addEventListener(event, displayRecipe),
-  );
+  // Subscribe to Publisher for render events
+  recipeView.addHandlerRender(controlRecipes);
 };
 
 init();
-
-displayRecipe();

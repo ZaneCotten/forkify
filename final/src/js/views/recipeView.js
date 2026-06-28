@@ -3,6 +3,8 @@ import icons from 'url:../../img/icons.svg';
 class RecipeView {
   #parentElement = document.querySelector('.recipe');
   #data;
+  #errorMessage = 'Recipe not found :(';
+  #message = '';
 
   //////////////////////////////////////////////
   // PUBLIC METHODS
@@ -18,7 +20,7 @@ class RecipeView {
   }
 
   // Displays spinner
-  spinner() {
+  renderSpinner() {
     this.#clear();
     const markup = this.#generateSpinnerMarkup();
     this.#insertMarkup(markup);
@@ -30,10 +32,24 @@ class RecipeView {
   }
 
   // Displays error message to user
-  error(err) {
-    this.#clear;
+  renderError(err) {
+    this.#clear();
     const markup = this.#generateErrorMarkup(err);
     this.#insertMarkup(markup);
+  }
+
+  // Displays message to user
+  renderMessage(message) {
+    this.#clear();
+    const markup = this.#generateMessageMarkup(message);
+    this.#insertMarkup(markup);
+  }
+
+  // Publisher for render methods
+  addHandlerRender(callback) {
+    ['hashchange', 'load'].forEach(event =>
+      window.addEventListener(event, callback),
+    );
   }
 
   //////////////////////////////////////////////
@@ -161,12 +177,27 @@ class RecipeView {
   `;
   }
 
-  #generateErrorMarkup(error) {
+  #generateErrorMarkup(error, errorMessage) {
     return `
       <div style="text-align: center; margin: 5rem;">
-        <h1>Recipe not found :(</h1>
+        <h1>${this.#errorMessage}</h1>
         <p>${error.message}</p>
       </div>
+    `;
+  }
+
+  #generateMessageMarkup(message = this.#message) {
+    return `
+    <div class="message">
+        <div>
+            <svg>
+                <use href="${icons}#icon-smile"></use>
+            </svg>
+        </div>
+        <p>
+            ${message}
+        </p>
+    </div>
     `;
   }
 }

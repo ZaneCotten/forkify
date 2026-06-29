@@ -16,7 +16,7 @@ class RecipeView extends View {
         return window.location.hash.slice(1);
     }
 
-    // Publisher for render methods
+    // Publisher for render callbacks
     addHandlerRender(callback) {
         ['hashchange', 'load'].forEach(event =>
             window.addEventListener(event, callback),
@@ -114,16 +114,16 @@ class RecipeView extends View {
     #generateIngredientMarkup(ingredient) {
         return `
         <li class="recipe__ingredient">
-          <svg class="recipe__icon">
-            <use href="${icons}.svg#icon-check"></use>
-          </svg>
-          ${this.#generateIngredientQuantityMarkup(ingredient.quantity)}
-          <div class="recipe__description">
-            <span class="recipe__unit">${ingredient.unit}</span>
-            ${ingredient.description}
-          </div>
+            <svg class="recipe__icon">
+                <use href="${icons}.svg#icon-check"></use>
+            </svg>
+            ${this.#generateIngredientQuantityMarkup(ingredient.quantity)}
+            <div class="recipe__description">
+                <span class="recipe__unit">${ingredient.unit}</span>
+                ${ingredient.description}
+            </div>
         </li>
-      `;
+    `;
     }
 
     // Returns Markup for ingredient quantity received

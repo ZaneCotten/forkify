@@ -69,7 +69,7 @@ export class View {
     }
 
     _generateErrorMarkup(error, errorMessage) {
-        const safeErrorMessage = this.#escapeHtml(error?.message ?? '');
+        const safeErrorMessage = this._escapeHtml(error?.message ?? '');
 
         return `
             <div style="text-align: center; margin: 5rem;">
@@ -94,12 +94,8 @@ export class View {
     `;
     }
 
-    //////////////////////////////////////////////
-    // PRIVATE METHODS
-    //////////////////////////////////////////////
-
     // Sanitizes input
-    #escapeHtml(value) {
+    _escapeHtml(value) {
         return String(value)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')

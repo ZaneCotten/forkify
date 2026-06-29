@@ -1,5 +1,6 @@
 import * as model from './model.js';
 import recipeView from './views/recipeView.js';
+import resultsView from './views/resultsView.js';
 import searchView from './views/searchView.js';
 
 if (module.hot) {
@@ -31,38 +32,33 @@ const controlRecipes = async function () {
     }
 };
 
-const controlSearch = async function (searchQuery) {
+const controlSearchResults = async function (query) {
     try {
-        // Check for empty search query
-        if (!searchQuery) return;
+        // 1. Check for empty search query
+        if (!query)
+            throw new Error('If you search for nothing, you will find nothing');
 
-        const data = await model.loadSearchResults(searchQuery);
+        // 2. Render spinner while fetching search results
+        resultsView.renderSpinner();
 
-        // If any recipes returned, will return true
-        const anyFoundRecipes = data.at(0) !== undefined;
+        // 3. Load search results
+        await model.loadSearchResults(query);
 
-        // If no recipes found, throw error
-        if (!anyFoundRecipes)
-            throw new Error(
-                `No recipes found with search query "${searchQuery}"`,
-            );
-
-        console.log('Found recipes: ', data);
+        // 4. Render found recipes
+        resultsView.render(model.state.search);
     } catch (err) {
         // Log any errors to console
-        console.error(`System Failure in controlSearches: \n${err}`);
+        console.error(`System Failure in controlSearchResults: \n${err}`);
 
-        // Render error message to user
-        recipeView.renderError(err);
+        // Render error to user
+        resultsView.renderError(err);
     }
 };
-
-controlRecipeList = function () {};
 
 const init = function () {
     // Subscribe to Publisher for render events
     recipeView.addHandlerRender(controlRecipes);
-    searchView.addHandlerSearch(controlSearch);
+    searchView.addHandlerSearch(controlSearchResults);
 };
 
 init();

@@ -1,35 +1,21 @@
-import { View } from './View';
+import { View } from './View.js';
 
 class SearchView extends View {
     _parentElement = document.querySelector('.search');
     _btnSearch = document.querySelector('.search__btn');
     _fieldSearch = document.querySelector('.search__field');
     _searchCallback;
-    _data;
     _message;
 
     //////////////////////////////////////////////
     // PUBLIC METHODS
     //////////////////////////////////////////////
 
-    // Gets hash from address bar (the currently selected recipe ID)
-    getHash() {
-        return window.location.hash.slice(1);
-    }
+    // Publisher for search handler
+    addHandlerSearch(handler) {
+        this._searchCallback = handler;
 
-    // Publisher for search callbacks
-    addHandlerSearch(callback) {
-        this._searchCallback = callback;
-
-        ['click', 'keydown'].forEach(eventType =>
-            this._parentElement.addEventListener(eventType, this.#handleSearch),
-        );
-    }
-
-    renderError(err) {
-        this._clear();
-        const markup = this._generateErrorMarkup(err);
-        this._insertMarkup(markup);
+        this._parentElement.addEventListener('submit', this.#handleSearch);
     }
 
     // Gets user input from search field
@@ -51,8 +37,7 @@ class SearchView extends View {
     //////////////////////////////////////////////
 
     #handleSearch = event => {
-        // Guard Clause
-        if (!this.#isValidEvent(event)) return;
+        event.preventDefault();
 
         // Ensures safe search query
         const safeSearchQuery = this._escapeHtml(this.searchQuery);
@@ -60,14 +45,6 @@ class SearchView extends View {
         // If valid event occurs, execute callback function
         this._searchCallback(safeSearchQuery);
     };
-
-    #isValidEvent(event) {
-        // Tries to find search button on click
-        const clickedElement = event.target.closest('.search__btn');
-
-        // If either are true, return true
-        return event.key === 'Enter' || clickedElement === this._btnSearch;
-    }
 }
 
 export default new SearchView();

@@ -35,11 +35,9 @@ export const loadRecipe = async function (id) {
     }
 };
 
-export const loadSearchResults = async function (searchQuery) {
+export const loadSearchResults = async function (query) {
     try {
-        const data = await getJSON(
-            `${API_URL}?search=${searchQuery}&key=${API_KEY}`,
-        );
+        const data = await getJSON(`${API_URL}?search=${query}&key=${API_KEY}`);
 
         // Destructure recipes object from data
         const {
@@ -47,11 +45,21 @@ export const loadSearchResults = async function (searchQuery) {
         } = data;
 
         // Check for any found recipes
-        if (!foundRecipes)
-            throw new Error(`No recipes found with search "${searchQuery}"`);
+        if (
+            !foundRecipes ||
+            (Array.isArray(foundRecipes) && foundRecipes.length === 0)
+        )
+            throw new Error(`No recipes found with search "${query}"`);
 
         // Update state
-        state.search = foundRecipes;
+        state.search = foundRecipes.map(recipe => {
+            return {
+                publisher: recipe.publisher,
+                imageUrl: recipe.image_url,
+                id: recipe.id,
+                title: recipe.title,
+            };
+        });
 
         // Return search results
         return state.search;

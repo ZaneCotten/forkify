@@ -131,6 +131,10 @@ const controlRemoveBookmark = function (recipe) {
 };
 
 const controlBookmarkResults = function () {
+    // Get bookmarks from localstorage
+    model.getPersistedBookmarks();
+
+    // Render bookmarks
     bookmarksView.render(model.state.bookmarks);
 };
 

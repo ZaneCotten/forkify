@@ -11,7 +11,7 @@ class BookmarksView extends View {
 
     // Generates all needed markup for list rendering
     _generateMarkup() {
-        return this._data.map(bookmarkedRecipe =>
+        return this._data?.map(bookmarkedRecipe =>
             this.#generatePreviewMarkup(bookmarkedRecipe),
         );
     }
@@ -20,7 +20,6 @@ class BookmarksView extends View {
     #generatePreviewMarkup(bookmarkedRecipe) {
         // Checks if result is active recipe
         const isActive = window.location.hash.slice(1) === bookmarkedRecipe.id;
-        console.log('isActive: ', isActive);
         return `
         <li class="preview">
             <a class="preview__link ${isActive ? 'preview__link--active' : ''}" href="#${bookmarkedRecipe.id}">

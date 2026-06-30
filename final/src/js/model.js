@@ -1,4 +1,9 @@
-import { API_KEY, API_URL, RESULTS_PER_PAGE } from './config.js';
+import {
+    API_KEY,
+    API_URL,
+    BOOKMARK_STORAGE_NAME,
+    RESULTS_PER_PAGE,
+} from './config.js';
 import { getJSON } from './helpers.js';
 
 export const state = {
@@ -106,10 +111,45 @@ export const addBookmark = function (recipe) {
     state.bookmarks.push(recipe);
 
     state.recipe.bookmarked = true;
+
+    // Save bookmarks to local storage
+    persistBookmarks();
 };
 
 export const removeBookmark = function (recipe) {
     state.bookmarks = state.bookmarks.filter(rec => rec.id !== recipe.id);
 
     state.recipe.bookmarked = false;
+
+    // Save bookmarks to local storage
+    persistBookmarks();
+};
+
+export const persistBookmarks = function () {
+    // const test = {
+    //     id: 1,
+    //     publisher: 'me',
+    //     sourceUrl: 'me.com',
+    //     imageUrl: 'me.svg',
+    //     title: 'oh yeah, me',
+    //     cookingTime: 45,
+    //     ingredients: ['1', '2', '3'],
+    //     servings: 4,
+    // };
+
+    // const testJSON = JSON.stringify(test);
+
+    // localStorage.setItem('test', testJSON);
+
+    const bookmarksJSON = JSON.stringify(state.bookmarks);
+    localStorage.setItem(BOOKMARK_STORAGE_NAME, bookmarksJSON);
+    // console.log(JSON.parse(localStorage.getItem(BOOKMARK_STORAGE_NAME)));
+};
+
+export const getPersistedBookmarks = function () {
+    console.log(JSON.parse(localStorage.getItem('test')));
+    const bookmarks = JSON.parse(localStorage.getItem(BOOKMARK_STORAGE_NAME));
+    if (!bookmarks) return;
+
+    state.bookmarks = bookmarks;
 };

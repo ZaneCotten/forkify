@@ -4,6 +4,7 @@ import { View } from './View.js';
 
 class RecipeView extends View {
     _parentElement = document.querySelector('.recipe');
+    _servingsCallback;
     _data;
     _message;
 
@@ -11,16 +12,38 @@ class RecipeView extends View {
     // PUBLIC METHODS
     //////////////////////////////////////////////
 
+    // Displays current recipe
+    render(data) {
+        this._data = data;
+
+        this._clear();
+        const markup = this._generateMarkup();
+        this._insertMarkup(markup);
+
+        // Sets servings event listener after recipe has been rendered
+        this.setServingsEventListener();
+    }
+
     // Gets hash from address bar (the currently selected recipe ID)
     getHash() {
         return window.location.hash.slice(1);
     }
 
-    // Publisher for render callbacks
-    addHandlerRender(callback) {
+    // Publisher for render handlers
+    addHandlerRender(handler) {
         ['hashchange', 'load'].forEach(event =>
-            window.addEventListener(event, callback),
+            window.addEventListener(event, handler),
         );
+    }
+
+    addHandlerUpdateServings(handler) {
+        this._servingsCallback = handler;
+    }
+
+    setServingsEventListener() {
+        document
+            .querySelector('.recipe__info-buttons')
+            .addEventListener('click', this.#handleUpdateServingsLogic);
     }
 
     //////////////////////////////////////////////
@@ -36,7 +59,7 @@ class RecipeView extends View {
                     <span>${this._data.title}</span>
                 </h1>
         </figure>
-      
+        
         <div class="recipe__details">
             <div class="recipe__info">
                 <svg class="recipe__info-icon">
@@ -51,7 +74,7 @@ class RecipeView extends View {
                 </svg>
                 <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
                 <span class="recipe__info-text">servings</span>
-      
+                
                 <div class="recipe__info-buttons">
                     <button class="btn--tiny btn--decrease-servings">
                         <svg>
@@ -65,7 +88,7 @@ class RecipeView extends View {
                     </button>
                 </div>
             </div>
-      
+            
             <div class="recipe__user-generated">
                 
             </div>
@@ -75,14 +98,14 @@ class RecipeView extends View {
                 </svg>
             </button>
         </div>
-      
+
         <div class="recipe__ingredients">
             <h2 class="heading--2">Recipe ingredients</h2>
                 <ul class="recipe__ingredient-list">
                     ${this._data.ingredients.map(ingredient => this.#generateIngredientMarkup(ingredient)).join('')}
                 </ul>
         </div>
-      
+
         <div class="recipe__directions">
             <h2 class="heading--2">How to cook it</h2>
             <p class="recipe__directions-text">
@@ -101,7 +124,7 @@ class RecipeView extends View {
             </svg>
             </a>
         </div>
-      `;
+    `;
     }
 
     //////////////////////////////////////////////
@@ -131,6 +154,25 @@ class RecipeView extends View {
             ? `<div class="recipe__quantity">${toFraction(quantity)}</div>`
             : '';
     }
+
+    #handleUpdateServingsLogic = e => {
+        const clickedElement = e.target.closest('.btn--tiny');
+
+        // Check for servings button press
+        if (!clickedElement) return;
+
+        // Calculates new serving amount
+        const newServingsAmount =
+            clickedElement === document.querySelector('.btn--increase-servings')
+                ? this._data.servings + 1
+                : this._data.servings - 1;
+
+        // If new amount would be 0, cancel/return
+        if (newServingsAmount === 0) return;
+
+        // Update
+        this._servingsCallback(newServingsAmount);
+    };
 }
 
 export default new RecipeView();

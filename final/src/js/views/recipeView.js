@@ -46,16 +46,12 @@ class RecipeView extends View {
             .addEventListener('click', this.#handleUpdateServingsLogic);
     }
 
-    get servings() {
-        return this._data.servings;
-    }
     //////////////////////////////////////////////
     // PROTECTED METHODS
     //////////////////////////////////////////////
 
     // Returns Markup using the current data (recipe)
     _generateMarkup() {
-        this._servings = this._data.servings;
         return `
         <figure class="recipe__fig">
             <img src="${this._data.imageUrl}" alt="${this._data.title}" class="recipe__img" />
@@ -168,8 +164,8 @@ class RecipeView extends View {
         // Calculates new serving amount
         const newServingsAmount =
             clickedElement === document.querySelector('.btn--increase-servings')
-                ? this.servings + 1
-                : this.servings - 1;
+                ? this._data.servings + 1
+                : this._data.servings - 1;
 
         // If new amount would be 0, cancel/return
         if (newServingsAmount === 0) return;

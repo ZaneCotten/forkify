@@ -18,6 +18,38 @@ export class View {
         this._insertMarkup(markup);
     }
 
+    update(data) {
+        this._data = data;
+
+        const newMarkup = this._generateMarkup();
+
+        // Create virtual DOM
+        const newDOM = document
+            .createRange()
+            .createContextualFragment(newMarkup);
+
+        // Convert string to array of elements
+        const newElements = Array.from(newDOM.querySelectorAll('*'));
+
+        // Get all current elements in parent container
+        const curElements = Array.from(
+            this._parentElement.querySelectorAll('*'),
+        );
+
+        // For each element in parent container
+        newElements.forEach((newEl, i) => {
+            // Guard Clause, if elements are equal or does not have text content, return
+            if (
+                newEl.isEqualNode(curElements.at(i)) ||
+                !newEl.firstChild?.nodeValue.trim()
+            )
+                return;
+
+            // Update text content of elements that are different
+            curElements.at(i).textContent = newEl.textContent;
+        });
+    }
+
     // Displays spinner
     renderSpinner() {
         this._clear();

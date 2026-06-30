@@ -1,12 +1,14 @@
-import { RESULTS_PER_PAGE } from '../config.js';
-import { View } from './View.js';
+import { View } from './View';
 
 class ResultsView extends View {
     _parentElement = document.querySelector('.results');
     _data;
-    _currentFirstResult = 0;
-    _currentLastResult = this._currentFirstResult + RESULTS_PER_PAGE;
     _message;
+
+    getResultsMarkup(data) {
+        this._data = data;
+        return this._generateMarkup();
+    }
 
     //////////////////////////////////////////////
     // PROTECTED METHODS
@@ -14,16 +16,7 @@ class ResultsView extends View {
 
     // Generates all needed markup for list rendering
     _generateMarkup() {
-        return this._data
-            .filter((result, i) =>
-                i >= this._currentFirstResult && i < this._currentLastResult
-                    ? result
-                    : null,
-            )
-            .reduce(
-                (str, recipe) => str + this.#generatePreviewMarkup(recipe),
-                '',
-            );
+        return this._data.map(result => this.#generatePreviewMarkup(result));
     }
 
     //////////////////////////////////////////////

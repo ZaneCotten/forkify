@@ -1,7 +1,15 @@
-import { API_KEY, API_URL } from './config.js';
+import { API_KEY, API_URL, RESULTS_PER_PAGE } from './config.js';
 import { getJSON } from './helpers.js';
 
-export const state = { recipe: {}, search: {} };
+export const state = {
+    recipe: {},
+    search: {
+        query: '',
+        results: {},
+        resultsPerPage: RESULTS_PER_PAGE,
+        page: 1,
+    },
+};
 
 // Fetches recipe data using recipe id
 export const loadRecipe = async function (id) {
@@ -37,6 +45,8 @@ export const loadRecipe = async function (id) {
 
 export const loadSearchResults = async function (query) {
     try {
+        state.search.query = query;
+
         const data = await getJSON(`${API_URL}?search=${query}&key=${API_KEY}`);
 
         // Destructure recipes object from data
@@ -52,7 +62,7 @@ export const loadSearchResults = async function (query) {
             throw new Error(`No recipes found with search "${query}"`);
 
         // Update state
-        state.search = foundRecipes.map(recipe => {
+        state.search.results = foundRecipes.map(recipe => {
             return {
                 publisher: recipe.publisher,
                 imageUrl: recipe.image_url,
@@ -62,8 +72,15 @@ export const loadSearchResults = async function (query) {
         });
 
         // Return search results
-        return state.search;
+        return state.search.results;
     } catch (err) {
         throw err;
     }
+};
+
+export const getSearchResultsPage = function (page = state.search.page) {
+    const start = (page - 1) * state.search.resultsPerPage;
+    const end = page * state.search.resultsPerPage;
+
+    return state.search.results.slice(start, end);
 };

@@ -4,7 +4,7 @@ class SearchView extends View {
     _parentElement = document.querySelector('.search');
     _btnSearch = document.querySelector('.search__btn');
     _fieldSearch = document.querySelector('.search__field');
-    _searchCallback;
+    #searchCallback;
     _message;
 
     //////////////////////////////////////////////
@@ -13,14 +13,9 @@ class SearchView extends View {
 
     // Publisher for search handler
     addHandlerSearch(handler) {
-        this._searchCallback = handler;
+        this.#searchCallback = handler;
 
         this._parentElement.addEventListener('submit', this.#handleSearch);
-    }
-
-    // Gets user input from search field
-    get searchQuery() {
-        return this._fieldSearch.value.trim().toLowerCase();
     }
 
     //////////////////////////////////////////////
@@ -36,14 +31,19 @@ class SearchView extends View {
     // PRIVATE METHODS
     //////////////////////////////////////////////
 
+    // Gets user input from search field
+    get #query() {
+        return this._fieldSearch.value.trim().toLowerCase();
+    }
+
     #handleSearch = event => {
         event.preventDefault();
 
         // Ensures safe search query
-        const safeSearchQuery = this._escapeHtml(this.searchQuery);
+        const safeSearchQuery = this._escapeHtml(this.#query);
 
         // If valid event occurs, execute callback function
-        this._searchCallback(safeSearchQuery);
+        this.#searchCallback(safeSearchQuery);
     };
 }
 

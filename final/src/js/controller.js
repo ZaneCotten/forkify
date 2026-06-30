@@ -1,4 +1,5 @@
 import * as model from './model.js';
+import paginationView from './views/paginationView.js';
 import recipeView from './views/recipeView.js';
 import resultsView from './views/resultsView.js';
 import searchView from './views/searchView.js';
@@ -10,6 +11,7 @@ if (module.hot) {
 
 const controlRecipes = async function () {
     try {
+        // Gets recipe ID from address bar
         const id = recipeView.getHash();
 
         // Guard Clause for empty hash
@@ -44,8 +46,14 @@ const controlSearchResults = async function (query) {
         // 3. Load search results
         await model.loadSearchResults(query);
 
-        // 4. Render found recipes
-        resultsView.render(model.state.search);
+        // 4. Render Pagination Buttons
+        paginationView.render(
+            model.state.search.page,
+            model.state.search.results,
+        );
+
+        // 5. Render found recipes
+        resultsView.render(model.getSearchResultsPage(model.state.search.page));
     } catch (err) {
         // Log any errors to console
         console.error(`System Failure in controlSearchResults: \n${err}`);
@@ -55,10 +63,19 @@ const controlSearchResults = async function (query) {
     }
 };
 
+const controlResultPagination = function (page) {
+    // 1. Update state
+    model.state.search.page = page;
+
+    // 2. Render page's recipes
+    resultsView.render(model.getSearchResultsPage(model.state.search.page));
+};
+
 const init = function () {
     // Subscribe to Publisher for render events
     recipeView.addHandlerRender(controlRecipes);
     searchView.addHandlerSearch(controlSearchResults);
+    paginationView.addHandlerPagination(controlResultPagination);
 };
 
 init();

@@ -20,6 +20,8 @@ const controlRecipes = async function () {
         // Show spinner while fetching recipe
         recipeView.renderSpinner();
 
+        resultsView.update(model.getSearchResultsPage());
+
         // Get recipe data
         await model.loadRecipe(id);
 
@@ -76,6 +78,10 @@ const controlServings = function (newServings) {
 
     recipeView.update(model.state.recipe);
 };
+
+// const controlAddBookmark = function () {
+//     model.addBookmark();
+// };
 
 const init = function () {
     // Subscribe to Publisher for render events

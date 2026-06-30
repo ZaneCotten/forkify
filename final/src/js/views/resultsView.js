@@ -5,11 +5,6 @@ class ResultsView extends View {
     _data;
     _message;
 
-    getResultsMarkup(data) {
-        this._data = data;
-        return this._generateMarkup();
-    }
-
     //////////////////////////////////////////////
     // PROTECTED METHODS
     //////////////////////////////////////////////
@@ -25,9 +20,12 @@ class ResultsView extends View {
 
     // Generates markup per recipe found
     #generatePreviewMarkup(result) {
+        // Checks if result is active recipe
+        const isActive = window.location.hash.slice(1) === result.id;
+
         return `
         <li class="preview">
-            <a class="preview__link preview__link--active" href="#${result.id}">
+            <a class="preview__link ${isActive ? 'preview__link--active' : ''}" href="#${result.id}">
                 <figure class="preview__fig">
                     <img src="${result.imageUrl}" alt="${result.title}" />
                 </figure>

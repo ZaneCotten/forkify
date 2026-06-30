@@ -9,6 +9,7 @@ export const state = {
         resultsPerPage: RESULTS_PER_PAGE,
         page: 1,
     },
+    bookmarks: [],
 };
 
 // Fetches recipe data using recipe id
@@ -71,6 +72,9 @@ export const loadSearchResults = async function (query) {
             };
         });
 
+        // Reset results page count
+        state.search.page = 1;
+
         // Return search results
         return state.search.results;
     } catch (err) {
@@ -82,7 +86,7 @@ export const getSearchResultsPage = function (page = state.search.page) {
     const start = (page - 1) * state.search.resultsPerPage;
     const end = page * state.search.resultsPerPage;
 
-    return state.search.results.slice(start, end);
+    return Array.from(state.search.results).slice(start, end);
 };
 
 export const updateServings = function (newServings) {
@@ -92,4 +96,14 @@ export const updateServings = function (newServings) {
     });
 
     state.recipe.servings = newServings;
+};
+
+const addBookmark = function (recipe) {
+    state.bookmarks.push(recipe);
+
+    state.recipe.bookmarked = true;
+};
+
+const removeBookmark = function (recipe) {
+    state.bookmarks = state.bookmarks.filter(rec => rec !== recipe);
 };

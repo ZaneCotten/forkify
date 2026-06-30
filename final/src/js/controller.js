@@ -21,10 +21,10 @@ const controlRecipes = async function () {
         recipeView.renderSpinner();
 
         // Get recipe data
-        const data = await model.loadRecipe(id);
+        await model.loadRecipe(id);
 
         // Render recipe to screen
-        recipeView.render(data);
+        recipeView.render(model.state.recipe);
     } catch (err) {
         // Log any errors to console
         console.error(`System Failure in controlRecipes: \n${err}`);
@@ -71,11 +71,18 @@ const controlResultPagination = function (page) {
     resultsView.render(model.getSearchResultsPage(model.state.search.page));
 };
 
+const controlServings = function (newServings) {
+    model.updateServings(newServings);
+
+    recipeView.render(model.state.recipe);
+};
+
 const init = function () {
     // Subscribe to Publisher for render events
     recipeView.addHandlerRender(controlRecipes);
     searchView.addHandlerSearch(controlSearchResults);
     paginationView.addHandlerPagination(controlResultPagination);
+    recipeView.addHandlerUpdateServings(controlServings);
 };
 
 init();

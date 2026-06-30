@@ -10,7 +10,6 @@ export class View {
     // PUBLIC METHODS
     //////////////////////////////////////////////
 
-    // Displays current recipe
     render(data) {
         this._data = data;
 

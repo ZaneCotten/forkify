@@ -12,18 +12,6 @@ class RecipeView extends View {
     // PUBLIC METHODS
     //////////////////////////////////////////////
 
-    // Displays current recipe
-    render(data) {
-        this._data = data;
-
-        this._clear();
-        const markup = this._generateMarkup();
-        this._insertMarkup(markup);
-
-        // Sets servings event listener after recipe has been rendered
-        this.setServingsEventListener();
-    }
-
     // Gets hash from address bar (the currently selected recipe ID)
     getHash() {
         return window.location.hash.slice(1);
@@ -38,12 +26,10 @@ class RecipeView extends View {
 
     addHandlerUpdateServings(handler) {
         this._servingsCallback = handler;
-    }
-
-    setServingsEventListener() {
-        document
-            .querySelector('.recipe__info-buttons')
-            .addEventListener('click', this.#handleUpdateServingsLogic);
+        this._parentElement.addEventListener(
+            'click',
+            this.#handleUpdateServingsLogic,
+        );
     }
 
     //////////////////////////////////////////////

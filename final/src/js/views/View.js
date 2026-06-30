@@ -38,15 +38,16 @@ export class View {
 
         // For each element in parent container
         newElements.forEach((newEl, i) => {
-            // Guard Clause, if elements are equal or does not have text content, return
-            if (
-                newEl.isEqualNode(curElements.at(i)) ||
-                !newEl.firstChild?.nodeValue.trim()
-            )
-                return;
-
+            const curEl = curElements.at(i);
             // Update text content of elements that are different
-            curElements.at(i).textContent = newEl.textContent;
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim())
+                curEl.textContent = newEl.textContent;
+
+            // Update element attributes that are different
+            if (!newEl.isEqualNode(curEl))
+                Array.from(newEl.attributes).forEach(attribute =>
+                    curEl.setAttribute(attribute.name, attribute.value),
+                );
         });
     }
 

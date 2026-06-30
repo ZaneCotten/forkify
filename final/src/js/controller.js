@@ -1,4 +1,5 @@
 import * as model from './model.js';
+import bookmarksView from './views/bookmarksView.js';
 import paginationView from './views/paginationView.js';
 import recipeView from './views/recipeView.js';
 import resultsView from './views/resultsView.js';
@@ -11,21 +12,25 @@ if (module.hot) {
 
 const controlRecipes = async function () {
     try {
-        // Gets recipe ID from address bar
+        // 1. Get recipe ID from address bar
         const id = recipeView.getHash();
 
-        // Guard Clause for empty hash
+        // 2. Guard Clause for empty hash
         if (!id) return;
 
-        // Show spinner while fetching recipe
+        // 3. Show spinner while fetching recipe
         recipeView.renderSpinner();
 
+        // 4. Update search results
         resultsView.update(model.getSearchResultsPage());
 
-        // Get recipe data
+        // 5. Update bookmark data
+        bookmarksView.render(model.state.bookmarks);
+
+        // 6. Get recipe data
         await model.loadRecipe(id);
 
-        // Render recipe to screen
+        // 7. Render recipe to screen
         recipeView.render(model.state.recipe);
     } catch (err) {
         // Log any errors to console
@@ -69,26 +74,79 @@ const controlResultPagination = function (page) {
     // 1. Update state
     model.state.search.page = page;
 
-    // 2. Render page's recipes
+    // 2. Render search results
     resultsView.render(model.getSearchResultsPage(model.state.search.page));
 };
 
 const controlServings = function (newServings) {
-    model.updateServings(newServings);
+    try {
+        model.updateServings(newServings);
 
-    recipeView.update(model.state.recipe);
+        recipeView.update(model.state.recipe);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlServings: \n${err}`);
+
+        // Render error to user
+        recipeView.renderError(err);
+    }
 };
 
-// const controlAddBookmark = function () {
-//     model.addBookmark();
-// };
+const controlAddBookmark = function (recipe) {
+    try {
+        // 1. Update state
+        model.addBookmark(recipe);
+
+        // 2. Update view
+        recipeView.update(model.state.recipe);
+
+        // 3. Update bookmarks list
+        bookmarksView.render(model.state.bookmarks);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlAddBookmark: \n${err}`);
+
+        // Render error to user
+        recipeView.renderError(err);
+    }
+};
+
+const controlRemoveBookmark = function (recipe) {
+    try {
+        // 1. Update state
+        model.removeBookmark(recipe);
+
+        // 2. Update view
+        recipeView.update(model.state.recipe);
+
+        // 3. Update bookmarks list
+        bookmarksView.render(model.state.bookmarks);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlRemoveBookmark: \n${err}`);
+
+        // Render error to user
+        recipe.renderError(err);
+    }
+};
+
+const controlBookmarkResults = function () {
+    // Get bookmarks from localstorage
+    model.getPersistedBookmarks();
+
+    // Render bookmarks
+    bookmarksView.render(model.state.bookmarks);
+};
 
 const init = function () {
     // Subscribe to Publisher for render events
     recipeView.addHandlerRender(controlRecipes);
+    recipeView.addHandlerUpdateServings(controlServings);
+    recipeView.addHandlerBookmarks(controlAddBookmark);
+    recipeView.addHandlerBookmarks(controlRemoveBookmark);
     searchView.addHandlerSearch(controlSearchResults);
     paginationView.addHandlerPagination(controlResultPagination);
-    recipeView.addHandlerUpdateServings(controlServings);
+    bookmarksView.addHandlerRender(controlBookmarkResults);
 };
 
 init();

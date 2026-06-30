@@ -5,6 +5,7 @@ import { View } from './View.js';
 class RecipeView extends View {
     _parentElement = document.querySelector('.recipe');
     _servingsCallback;
+    _bookmarkCallbacks = [];
     _data;
     _message;
 
@@ -28,9 +29,31 @@ class RecipeView extends View {
         this._servingsCallback = handler;
         this._parentElement.addEventListener(
             'click',
-            this.#handleUpdateServingsLogic,
+            this.#handleUpdateServingsChecks,
         );
     }
+
+    addHandlerBookmarks(handler) {
+        this._bookmarkCallbacks.push(handler);
+        this._parentElement.addEventListener(
+            'click',
+            this.#handleBookMarkChecks,
+        );
+    }
+
+    #handleBookMarkChecks = event => {
+        const btn = event.target.closest('.btn--bookmark');
+
+        if (!btn) return;
+
+        const bookmarkCallback =
+            this._data?.bookmarked === true
+                ? this._bookmarkCallbacks.at(1)
+                : this._bookmarkCallbacks.at(0);
+
+        console.log(this._data);
+        bookmarkCallback(this._data);
+    };
 
     //////////////////////////////////////////////
     // PROTECTED METHODS
@@ -78,9 +101,9 @@ class RecipeView extends View {
             <div class="recipe__user-generated">
                 
             </div>
-            <button class="btn--round">
+            <button class="btn--round btn--bookmark">
                 <svg class="">
-                    <use href="${icons}.svg#icon-bookmark-fill"></use>
+                    <use href="${icons}.svg#icon-bookmark${this._data.bookmarked === true ? '-fill' : ''}"></use>
                 </svg>
             </button>
         </div>
@@ -141,7 +164,7 @@ class RecipeView extends View {
             : '';
     }
 
-    #handleUpdateServingsLogic = e => {
+    #handleUpdateServingsChecks = e => {
         const clickedElement = e.target.closest('.btn--tiny');
 
         // Check for servings button press

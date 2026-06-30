@@ -69,26 +69,64 @@ const controlResultPagination = function (page) {
     // 1. Update state
     model.state.search.page = page;
 
-    // 2. Render page's recipes
+    // 2. Render search results
     resultsView.render(model.getSearchResultsPage(model.state.search.page));
 };
 
 const controlServings = function (newServings) {
-    model.updateServings(newServings);
+    try {
+        model.updateServings(newServings);
 
-    recipeView.update(model.state.recipe);
+        recipeView.update(model.state.recipe);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlServings: \n${err}`);
+
+        // Render error to user
+        recipeView.renderError(err);
+    }
 };
 
-// const controlAddBookmark = function () {
-//     model.addBookmark();
-// };
+const controlAddBookmark = function (recipe) {
+    try {
+        // 1. Update state
+        model.addBookmark(recipe);
+
+        // 2. Update view
+        recipeView.update(model.state.recipe);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlAddBookmark: \n${err}`);
+
+        // Render error to user
+        recipeView.renderError(err);
+    }
+};
+
+const controlRemoveBookmark = function (recipe) {
+    try {
+        // 1. Update state
+        model.removeBookmark(recipe);
+
+        // 2. Update view
+        recipeView.update(model.state.recipe);
+    } catch (err) {
+        // Log any errors to console
+        console.error(`System Failure in controlRemoveBookmark: \n${err}`);
+
+        // Render error to user
+        recipe.renderError(err);
+    }
+};
 
 const init = function () {
     // Subscribe to Publisher for render events
     recipeView.addHandlerRender(controlRecipes);
+    recipeView.addHandlerUpdateServings(controlServings);
+    recipeView.addHandlerBookmarks(controlAddBookmark);
+    recipeView.addHandlerBookmarks(controlRemoveBookmark);
     searchView.addHandlerSearch(controlSearchResults);
     paginationView.addHandlerPagination(controlResultPagination);
-    recipeView.addHandlerUpdateServings(controlServings);
 };
 
 init();

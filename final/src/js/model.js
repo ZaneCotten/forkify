@@ -37,6 +37,10 @@ export const loadRecipe = async function (id) {
             servings: recipe.servings,
         };
 
+        // Ensure bookmarked recipes are still bookmarked after new API call
+        if (state.bookmarks.some(rec => rec.id === state.recipe.id))
+            state.recipe.bookmarked = true;
+
         // Return recipe
         return state.recipe;
     } catch (err) {
@@ -98,12 +102,14 @@ export const updateServings = function (newServings) {
     state.recipe.servings = newServings;
 };
 
-const addBookmark = function (recipe) {
+export const addBookmark = function (recipe) {
     state.bookmarks.push(recipe);
 
     state.recipe.bookmarked = true;
 };
 
-const removeBookmark = function (recipe) {
-    state.bookmarks = state.bookmarks.filter(rec => rec !== recipe);
+export const removeBookmark = function (recipe) {
+    state.bookmarks = state.bookmarks.filter(rec => rec.id !== recipe.id);
+
+    state.recipe.bookmarked = false;
 };

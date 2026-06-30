@@ -79,9 +79,9 @@ const controlServings = function (newServings) {
     recipeView.update(model.state.recipe);
 };
 
-const controlAddBookmark = function () {
-    model.addBookmark();
-};
+// const controlAddBookmark = function () {
+//     model.addBookmark();
+// };
 
 const init = function () {
     // Subscribe to Publisher for render events

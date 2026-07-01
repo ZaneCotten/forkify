@@ -51,7 +51,6 @@ class RecipeView extends View {
                 ? this._bookmarkCallbacks.at(1)
                 : this._bookmarkCallbacks.at(0);
 
-        console.log(this._data);
         bookmarkCallback(this._data);
     };
 

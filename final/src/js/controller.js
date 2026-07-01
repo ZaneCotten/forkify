@@ -9,7 +9,6 @@ import searchView from './views/searchView.js';
 
 if (module.hot) {
     module.hot.accept();
-    console.log('Hot module updated!');
 }
 
 const controlRecipes = async function () {

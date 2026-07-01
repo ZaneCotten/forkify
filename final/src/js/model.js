@@ -36,7 +36,7 @@ const createRecipeObject = function (data) {
 // Fetches recipe data using recipe id
 export const loadRecipe = async function (id) {
     try {
-        const data = await AJAX(`${API_URL}/${id}&key=${API_KEY}`);
+        const data = await AJAX(`${API_URL}/${id}`);
 
         // Check if data is undefined
         if (!data) throw new Error(`Could not find recipe by id: ${id}`);

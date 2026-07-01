@@ -16,7 +16,7 @@ export const AJAX = async function (url, uploadData = undefined) {
             ? fetch(url, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(newRecipe),
+                  body: JSON.stringify(uploadData),
               })
             : fetch(url);
 

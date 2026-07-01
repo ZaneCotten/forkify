@@ -1,3 +1,4 @@
+import icons from 'url:../../img/icons.svg';
 import { View } from './View';
 
 class BookmarksView extends View {
@@ -30,6 +31,13 @@ class BookmarksView extends View {
                     <h4 class="preview__title">${bookmarkedRecipe.title} ...</h4>
                     <p class="preview__publisher">${bookmarkedRecipe.publisher}</p>
                 </div>
+                <div class="preview__user-generated ${bookmarkedRecipe.key ? '' : 'hidden'}">
+                    <svg>
+                        <use href="${icons}#icon-user"></use>
+                    </svg>
+                </div>
+                
+                
             </a>
         </li>
         `;
